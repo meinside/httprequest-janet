@@ -1,8 +1,6 @@
-# src/httprequest.janet
+# src/init.janet
 #
 # Helper functions for HTTP Request.
-#
-# Depends on [uri](https://github.com/andrewchambers/janet-uri), [http](https://github.com/joy-framework/http), and [spork](https://github.com/janet-lang/spork).
 #
 # created on : 2022.09.13.
 # last update: 2022.09.15.
@@ -11,12 +9,22 @@
 (import http)
 (import spork/json)
 
-(def default-content-type "application/octet-stream")
-(def form-content-type "application/x-www-form-urlencoded")
-(def json-content-type "application/json;charset=utf-8")
+(def- default-content-type "application/octet-stream")
+(def- form-content-type "application/x-www-form-urlencoded")
+(def- json-content-type "application/json;charset=utf-8")
 
 ################################
 # Parameter helper functions
+
+(defn urlencode
+  "Returns the urlencoded string of the given value."
+  [v]
+  (uri/escape (string v)))
+
+(defn urldecode
+  "Returns the urldecoded string of the given value."
+  [v]
+  (uri/unescape (string v)))
 
 (defn file->param
   "Returns a struct with a file handle and its filename for multipart request. Passed file handle will be closed automatically after HTTP request, so the returned struct should not be reused."
@@ -37,16 +45,6 @@
 
 ################################
 # Misc. functions
-
-(defn- urlencode 
-  "Returns the urlencoded string of the given value."
-  [v]
-  (uri/escape (string v)))
-
-(defn- urldecode 
-  "Returns the urldecoded string of the given value."
-  [v]
-  (uri/unescape (string v)))
 
 (defn- arr?
   "Returns if the given value is a tuple or array."

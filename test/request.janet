@@ -1,9 +1,10 @@
-(use ../src/httprequest)
+(use ../src/init)
+
 (import spork/json)
 
 (def header-key-for-test "test-header")
 (def header-value-for-test "http request test")
-(def filepath-for-test (string (os/cwd) "/src/httprequest.janet"))
+(def filepath-for-test (string (os/cwd) "/src/init.janet"))
 (def param-for-test {:a "A"
                      :b -42
                      :c [1 2 3 4]
