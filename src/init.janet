@@ -3,7 +3,7 @@
 # Helper functions for HTTP Request.
 #
 # created on : 2022.09.13.
-# last update: 2022.09.15.
+# last update: 2022.09.16.
 
 (import uri)
 (import http)
@@ -42,6 +42,18 @@
            filename (last (string/split "/" filepath))]
     (file->param file filename content-type)
     nil))
+
+(defn- file-param?
+  "Checks if given value is a file parameter."
+  [v]
+  (and
+    (struct? v)
+    (= :core/file (type (v :handle)))))
+
+(defn has-file?
+  "Checks if given params include any file parameter value."
+  [params]
+  (not (empty? (filter file-param? (values params)))))
 
 ################################
 # Misc. functions
@@ -94,18 +106,6 @@
                        (string (urlencode k) "=" (string v))))
                     (pairs dict))
                "&"))
-
-(defn- file-param?
-  "Checks if given value is a file parameter."
-  [v]
-  (and
-    (struct? v)
-    (= :core/file (type (v :handle)))))
-
-(defn- has-file?
-  "Checks if given params include any file parameter value."
-  [params]
-  (not (empty? (filter file-param? (values params)))))
 
 (defn- params->multipart
   "Converts given parameters to multipart request body."
