@@ -3,7 +3,7 @@
 # Helper functions for HTTP Request.
 #
 # created on : 2022.09.13.
-# last update: 2022.09.16.
+# last update: 2022.09.17.
 
 (import uri)
 (import http)
@@ -17,17 +17,22 @@
 # Parameter helper functions
 
 (defn urlencode
-  "Returns the urlencoded string of the given value."
+  ``Returns the urlencoded string of the given value.
+  ``
   [v]
   (uri/escape (string v)))
 
 (defn urldecode
-  "Returns the urldecoded string of the given value."
+  ``Returns the urldecoded string of the given value.
+  ``
   [v]
   (uri/unescape (string v)))
 
 (defn file->param
-  "Returns a struct with a file handle and its filename for multipart request. Passed file handle will be closed automatically after HTTP request, so the returned struct should not be reused."
+  ``Returns a struct with a file handle and its filename for multipart request.
+
+  Passed file handle will be closed automatically after HTTP request, so the returned struct should not be reused.
+  ``
   [file filename &opt content-type]
   (default content-type default-content-type)
   {:handle file
@@ -35,7 +40,12 @@
    :content-type content-type})
 
 (defn filepath->param
-  "Returns a struct with a file handle and its filename for multipart request. File handle will be closed automatically after HTTP request, so the returned struct should not be reused. Returns nil when `file/open` fails with the passed filepath."
+  ``Returns a struct with a file handle and its filename for multipart request.
+
+  File handle will be closed automatically after HTTP request, so the returned struct should not be reused.
+
+  Returns nil when `file/open` fails with the passed filepath.
+  ``
   [filepath &opt content-type]
   (default content-type default-content-type)
   (if-let [file (file/open filepath :r)
@@ -44,14 +54,16 @@
     nil))
 
 (defn- file-param?
-  "Checks if given value is a file parameter."
+  ``Checks if given value is a file parameter.
+  ``
   [v]
   (and
     (struct? v)
     (= :core/file (type (v :handle)))))
 
 (defn has-file?
-  "Checks if given params include any file parameter value."
+  ``Checks if given params include any file parameter value.
+  ``
   [params]
   (not (empty? (filter file-param? (values params)))))
 
@@ -59,26 +71,30 @@
 # Misc. functions
 
 (defn- arr?
-  "Returns if the given value is a tuple or array."
+  ``Returns if the given value is a tuple or array.
+  ``
   [v]
   (or
     (tuple? v)
     (array? v)))
 
 (defn- dict?
-  "Returns if the given value is a struct or table."
+  ``Returns if the given value is a struct or table.
+  ``
   [v]
   (or
     (struct? v)
     (table? v)))
 
 (defn- arr->body
-  "Converts given tuple/array to a string for HTTP request body."
+  ``Converts given tuple/array to a string for HTTP request body.
+  ``
   [arr]
   (string/join (map urlencode (map string arr)) ","))
 
 (defn- dict->body
-  "Converts given struct/table to a string for HTTP request body."
+  ``Converts given struct/table to a string for HTTP request body.
+  ``
   [name dict]
   (string/join (map (fn [(k v)]
                       (string/format "%s[%s]=%s" (urlencode name) (urlencode k) (urlencode v)))
@@ -86,7 +102,8 @@
                "&"))
 
 (defn- value->urlencoded
-  "Converts given parameter to urlencoded string."
+  ``Converts given parameter to urlencoded string.
+  ``
   [v]
   (cond
     (arr? v) (arr->body v)
@@ -97,18 +114,20 @@
     (string v)))
 
 (defn- params->body
-  "Converts given parameters to urlencoded request body."
+  ``Converts given parameters to urlencoded request body.
+  ``
   [dict]
   (string/join (map (fn [(k v)]
-                     (cond
-                       (arr? v) (string (urlencode k) "=" (arr->body v))
-                       (dict? v) (dict->body k v)
-                       (string (urlencode k) "=" (string v))))
+                      (cond
+                        (arr? v) (string (urlencode k) "=" (arr->body v))
+                        (dict? v) (dict->body k v)
+                        (string (urlencode k) "=" (string v))))
                     (pairs dict))
                "&"))
 
 (defn- params->multipart
-  "Converts given parameters to multipart request body."
+  ``Converts given parameters to multipart request body.
+  ``
   [dict boundary]
   (let [buf @""
         nl "\r\n"
@@ -134,24 +153,28 @@
     buf))
 
 (defn- params->json
-  "Converts given parameters to JSON string for request body."
+  ``Converts given parameters to JSON string for request body.
+  ``
   [dict]
   (json/encode dict))
 
 (defn- method->string
-  "Converts method keyword to string."
+  ``Converts method keyword to string.
+  ``
   [method]
   (string/ascii-upper (string method)))
 
 (defn- request<-query
-  "Sends a HTTP request with query string."
+  ``Sends a HTTP request with query string.
+  ``
   [method url headers params]
   (let [method (method->string method)
         url (string url "?" (params->body params))]
     (http/request method url {:headers headers})))
 
 (defn- request<-body
-  "Sends a HTTP request with urlencoded or multipart body."
+  ``Sends a HTTP request with urlencoded or multipart body.
+  ``
   [method url headers params &opt json?]
   (let [method (method->string method)
         multipart? (has-file? params)
@@ -171,7 +194,8 @@
                               :body body})))
 
 (defn- request
-  "Sends a HTTP request and returns the response body as string."
+  ``Sends a HTTP request and returns the response body as string.
+  ``
   [method url headers params &opt json?]
   (default json? false)
   (cond
@@ -188,32 +212,38 @@
 # HTTP method functions
 
 (defn get
-  "Sends a HTTP GET request and returns the response."
+  ``Sends a HTTP GET request and returns the response.
+  ``
   [url headers params]
   (request :get url headers params))
 
 (defn post
-  "Sends a HTTP POST request and returns the response."
+  ``Sends a HTTP POST request and returns the response.
+  ``
   [url headers params]
   (request :post url headers params))
 
 (defn post<-json
-  "Sends a HTTP POST request with JSON body and returns the response."
+  ``Sends a HTTP POST request with JSON body and returns the response.
+  ``
   [url headers params]
   (request :post url headers params true))
 
 (defn delete
-  "Sends a HTTP DELETE request and returns the response."
+  ``Sends a HTTP DELETE request and returns the response.
+  ``
   [url headers params]
   (request :delete url headers params))
 
 (defn put
-  "Sends a HTTP PUT request and returns the response."
+  ``Sends a HTTP PUT request and returns the response.
+  ``
   [url headers params]
   (request :put url headers params))
 
 (defn put<-json
-  "Sends a HTTP PUT request with JSON body and returns the response."
+  ``Sends a HTTP PUT request with JSON body and returns the response.
+  ``
   [url headers params]
   (request :put url headers params true))
 
