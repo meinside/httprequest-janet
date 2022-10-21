@@ -118,3 +118,27 @@
 
     (assert (= (headers header-key-for-test) header-value-for-test))
     (assert (pos? (length data))))
+
+# 404 error
+(let [response (get "https://postman-echo.com/no-such-url"
+                    {header-key-for-test header-value-for-test}
+                    param-for-test)
+      status (response :status)
+      body (response :body)]
+    #(pp body)
+
+    (assert (= 404 status)))
+
+# other errors (should be handled with `try`)
+(try
+  (do
+    (let [response (get "malformed-url"
+                        {header-key-for-test header-value-for-test}
+                        param-for-test)]
+      #(pp response)
+
+      (assert false)))
+  ([err] (do
+           (print (string/format "failed to handle malformed url: %s" (string err)))
+
+           (assert true))))
