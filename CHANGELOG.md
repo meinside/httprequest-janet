@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.0] - 2022-11-03
+- Fix for importing this library from outer world.
+- Add a prototype for request.
+- Add a test for :execute of request prototype.
+- Add `src/queue.janet` and related tests for enqueueing and processing multiple requests sequentially.
+
 ## [0.0.5] - 2022-11-03
 - Refactor codes.
 
@@ -18,6 +24,7 @@
 ## [0.0.0] - 2022-09-13
 - Created this project.
 
+[0.1.0]: https://github.com/meinside/janet-httprequest/compare/v0.0.5...v0.1.0
 [0.0.5]: https://github.com/meinside/janet-httprequest/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/meinside/janet-httprequest/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/meinside/janet-httprequest/compare/v0.0.2...v0.0.3

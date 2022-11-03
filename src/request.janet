@@ -1,6 +1,6 @@
 # src/request.janet
 #
-# Helper functions for HTTP Request.
+# Things for HTTP Request.
 #
 # created on : 2022.09.13.
 # last update: 2022.11.03.
@@ -12,6 +12,17 @@
 (def- default-content-type "application/octet-stream")
 (def- form-content-type "application/x-www-form-urlencoded")
 (def- json-content-type "application/json;charset=utf-8")
+
+# prototype for request
+(def Request
+  @{:method nil
+    :url nil
+    :headers {}
+    :params {}
+    :json? false
+
+    # prototype functions
+    :execute nil})
 
 ################################
 # Parameter helper functions
@@ -246,4 +257,30 @@
   ``
   [url headers params]
   (request :put url headers params true))
+
+################################
+# Helper functions
+
+(defn new-request
+  ``Creates and returns a new request.
+  ``
+  [method url &opt headers params json?]
+
+  (default headers {})
+  (default params {})
+  (default json? false)
+
+  (table/setproto @{:method method
+                    :url url
+                    :headers headers
+                    :params params
+                    :json? json?
+
+                    :execute (fn [self]
+                               (request (self :method)
+                                        (self :url)
+                                        (self :headers)
+                                        (self :params)
+                                        (self :json?)))}
+                  Request))
 
