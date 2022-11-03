@@ -1,4 +1,4 @@
-(use ../src/init)
+(use ../src/request)
 
 (import spork/json)
 
