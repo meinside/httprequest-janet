@@ -30,6 +30,8 @@ $ sudo apt install libcurl4-openssl-dev
 
 ## Usage
 
+Do HTTP methods with:
+
 ```clojure
 (import httprequest :as r)
   
@@ -52,5 +54,31 @@ $ sudo apt install libcurl4-openssl-dev
                :header-key2 :header-value2}
               {:form-key1 "some value"
                :form-key2 -42})
+```
+
+or create HTTP requests and execute/enqueue them:
+
+```clojure
+(let [req (r/new-request :get "https://postman-echo.com/get")
+      response (:execute req)]
+    (pp response))
+
+(let [queue (r/new-queue)
+      req1 (r/new-request :post "https://postman-echo.com/post")
+      req2 (r/new-request :put "https://postman-echo.com/put")]
+    (:enqueue queue req1
+                    (fn [res]
+                      (pp res))
+                    (fn [res]
+                      (= 200 (res :status)))
+                    (fn [err]
+                      (pp err))
+                    (fn [res]
+                      (not= 200 (res :status))))
+    (:enqueue queue req2
+                    (fn [res]
+                      (pp res)))
+
+    (:close queue))
 ```
 

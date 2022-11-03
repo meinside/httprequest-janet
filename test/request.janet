@@ -1,14 +1,18 @@
+# test/request.janet
+#
+# last update: 2022.11.03.
+
 (use ../src/request)
 
 (import spork/json)
 
-(def header-key-for-test "test-header")
-(def header-value-for-test "http request test")
-(def filepath-for-test (string (os/cwd) "/src/init.janet"))
-(def param-for-test {:a "A"
-                     :b -42
-                     :c [1 2 3 4]
-                     :d {:x 10 :y "Y" :z :z}})
+(def- header-key-for-test "test-header")
+(def- header-value-for-test "http request test")
+(def- filepath-for-test (string (os/cwd) "/src/init.janet"))
+(def- param-for-test {:a "A"
+                      :b -42
+                      :c [1 2 3 4]
+                      :d {:x 10 :y "Y" :z :z}})
 
 # HTTP GET
 (let [response (get "https://postman-echo.com/get"
@@ -142,3 +146,21 @@
            (print (string/format "failed to handle malformed url: %s" (string err)))
 
            (assert true))))
+
+# create a request and execute it
+(let [request (new-request :post
+                           "https://postman-echo.com/post"
+                           {header-key-for-test header-value-for-test}
+                           param-for-test
+                           true)
+      response (:execute request)
+      status (response :status)
+      body (json/decode (response :body))
+      headers (body "headers")
+      data (body "data")]
+    (assert (= 200 status))
+
+    #(pp body)
+
+    (assert (= (headers header-key-for-test) header-value-for-test))
+    (assert (pos? (length data))))
