@@ -8,4 +8,5 @@
 
 (declare-source
   :prefix "httprequest"
-  :source @["src"])
+  :source ["src/init.janet"
+           "src/request.janet"])
