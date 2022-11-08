@@ -1,5 +1,8 @@
 # Changelog
 
+## [0.2.0] - 2022-11-08
+- Change repository name.
+
 ## [0.1.0] - 2022-11-03
 - Fix for importing this library from outer world.
 - Add a prototype for request.
@@ -24,6 +27,7 @@
 ## [0.0.0] - 2022-09-13
 - Created this project.
 
+[0.2.0]: https://github.com/meinside/janet-httprequest/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/meinside/janet-httprequest/compare/v0.0.5...v0.1.0
 [0.0.5]: https://github.com/meinside/janet-httprequest/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/meinside/janet-httprequest/compare/v0.0.3...v0.0.4
