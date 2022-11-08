@@ -11,7 +11,7 @@ So I made this helper.
 In your `project.janet` file, add:
 
 ```clojure
-{:dependencies ["https://github.com/meinside/janet-httprequest"]}
+{:dependencies ["https://github.com/meinside/httprequest-janet"]}
 ```
 
 ## Dependencies
