@@ -1,5 +1,8 @@
 # Changelog
 
+## [0.2.1] - 2023-08-03
+- Edit tests.
+
 ## [0.2.0] - 2022-11-08
 - Change repository name.
 
@@ -27,6 +30,7 @@
 ## [0.0.0] - 2022-09-13
 - Created this project.
 
+[0.2.1]: https://github.com/meinside/janet-httprequest/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/meinside/janet-httprequest/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/meinside/janet-httprequest/compare/v0.0.5...v0.1.0
 [0.0.5]: https://github.com/meinside/janet-httprequest/compare/v0.0.4...v0.0.5
