@@ -1,6 +1,6 @@
 # test/queue.janet
 #
-# last update: 2022.11.03.
+# last update: 2023.08.03.
 
 (use ../src/request)
 (use ../src/queue)
@@ -27,7 +27,7 @@
                           # success when 200 (will fail on purpose)
                           (= 200 (res :status)))
                         (fn [err]
-                          (assert false "will not reach here"))
+                          (assert false (string/format "should not reach here: %j" err)))
                         (fn [res]
                           # retry on 503 error
                           (= 503 (res :status)))))
@@ -42,7 +42,7 @@
                           # success when 200 (will fail on purpose)
                           (= 200 (res :status)))
                         (fn [err]
-                          (assert false "will not reach here"))))
+                          (assert false (string/format "should not reach here: %j" err)))))
       # exception while request
       (assert (:enqueue queue
                         (new-request :get "malformed-url")

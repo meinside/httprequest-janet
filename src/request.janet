@@ -3,7 +3,7 @@
 # Things for HTTP Request.
 #
 # created on : 2022.09.13.
-# last update: 2022.11.03.
+# last update: 2023.08.03.
 
 (import uri)
 (import http)
@@ -63,6 +63,21 @@
            filename (last (string/split "/" filepath))]
     (file->param file filename content-type)
     nil))
+
+(defn- url->port
+  ``Extracts a port number from given url. Falls back to 80.
+  ``
+  [url]
+  (if-let [parsed (uri/parse url)]
+    (if-let [port (parsed :port)]
+      port
+      (case (parsed :scheme)
+        "http" 80
+        "https" 443
+        80))
+    (if (string/has-prefix? "https" url)
+      443
+      80)))
 
 (defn- file-param?
   ``Checks if given value is a file parameter.
@@ -175,13 +190,23 @@
   [method]
   (string/ascii-upper (string method)))
 
+(defn- url+params->query
+  ``Converts given URL and parameters to query string.
+  ``
+  [url params]
+  (if (> (length params) 0)
+    (string url "?" (params->body params))
+    url))
+
 (defn- request<-query
   ``Sends a HTTP request with query string.
   ``
   [method url headers params]
   (let [method (method->string method)
-        url (string url "?" (params->body params))]
-    (http/request method url {:headers headers})))
+        url (url+params->query url params)
+        port (url->port url)]
+    (http/request method url {:headers headers
+                              :port port})))
 
 (defn- request<-body
   ``Sends a HTTP request with urlencoded or multipart body.
@@ -200,9 +225,11 @@
                                          (string/format "multipart/form-data; boundary=%s" boundary)
                                          (if json?
                                            json-content-type
-                                           form-content-type))})]
+                                           form-content-type))})
+        port (url->port url)]
     (http/request method url {:headers headers
-                              :body body})))
+                              :body body
+                              :port port})))
 
 (defn- request
   ``Sends a HTTP request and returns the response body as string.
