@@ -318,6 +318,14 @@
 ################################
 # Helper functions
 
+(defn- request-as-body?
+  ``Returns true if given `method` needs to send requests as body.
+  ``
+  [method]
+
+  # FIXME: may not be a reasonable default value
+  (not (nil? (index-of method [:post :put :patch]))))
+
 (defn new-request
   ``Creates and returns a new request.
   ``
@@ -325,7 +333,7 @@
 
   (default headers {})
   (default params {})
-  (default body? (index-of method [:post :put :patch])) # FIXME: may not be a reasonable default value
+  (default body? (request-as-body? method))
   (default json? false)
 
   (table/setproto @{:method method
