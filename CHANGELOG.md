@@ -1,5 +1,8 @@
 # Changelog
 
+## [0.3.0] - 2023-08-31
+- Fix to add options of whether to send request as body and send that body as JSON.
+
 ## [0.2.1] - 2023-08-03
 - Edit tests.
 
@@ -30,6 +33,7 @@
 ## [0.0.0] - 2022-09-13
 - Created this project.
 
+[0.3.0]: https://github.com/meinside/janet-httprequest/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/meinside/janet-httprequest/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/meinside/janet-httprequest/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/meinside/janet-httprequest/compare/v0.0.5...v0.1.0

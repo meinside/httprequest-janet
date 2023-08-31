@@ -19,6 +19,8 @@
     :url nil
     :headers {}
     :params {}
+
+    :body? false
     :json? false
 
     # prototype functions
@@ -232,58 +234,86 @@
                               :port port})))
 
 (defn- request
-  ``Sends a HTTP request and returns the response body as string.
+  ``Sends a HTTP request and returns the response body as a string.
   ``
-  [method url headers params &opt json?]
-  (default json? false)
-  (cond
-    (or
-      (= method :get)
-      (= method :head)
-      (= method :delete)) (request<-query method url headers params)
-    (or
-      (= method :post)
-      (= method :put)) (request<-body method url headers params json?)
-    (string/format "method: %s not implemented yet." method)))
+  [method url headers params &named body? json?]
+  (if body?
+    (request<-body method url headers params json?)
+    (request<-query method url headers params)))
 
 ################################
 # HTTP method functions
 
 (defn get
   ``Sends a HTTP GET request and returns the response.
+
+  Call with `:body? true` for sending params as body,
+
+  and `:json? true` for sending body in JSON format.
   ``
-  [url headers params]
-  (request :get url headers params))
+  [url headers params &named body? json?]
+  (request :get url headers params :body? body?
+                                   :json? json?))
 
 (defn post
   ``Sends a HTTP POST request and returns the response.
+
+  Call with `:json? true` for sending body in JSON format.
   ``
-  [url headers params]
-  (request :post url headers params))
+  [url headers params &named json?]
+  (request :post url headers params :body? true
+                                    :json? json?))
 
 (defn post<-json
   ``Sends a HTTP POST request with JSON body and returns the response.
   ``
   [url headers params]
-  (request :post url headers params true))
+  (request :post url headers params :body? true
+                                    :json? true))
 
 (defn delete
   ``Sends a HTTP DELETE request and returns the response.
+
+  Call with `:body? true` for sending params as body,
+
+  and `:json? true` for sending body in JSON format.
   ``
-  [url headers params]
-  (request :delete url headers params))
+  [url headers params &named body? json?]
+  (request :delete url headers params :body? body?
+                                      :json? json?))
 
 (defn put
   ``Sends a HTTP PUT request and returns the response.
+
+  Call with `:json? true` for sending body in JSON format.
   ``
-  [url headers params]
-  (request :put url headers params))
+  [url headers params &named json?]
+  (request :put url headers params :body? true
+                                   :json? json?))
 
 (defn put<-json
   ``Sends a HTTP PUT request with JSON body and returns the response.
   ``
   [url headers params]
-  (request :put url headers params true))
+  (request :put url headers params :body? true
+                                   :json? true))
+
+(defn patch
+  ``Sends a HTTP PATCH request and returns the response.
+
+  Call with `:json? true` for sending body in JSON format.
+  ``
+  [url headers params &named json?]
+  (request :patch url headers params :body? true
+                                     :json? json?))
+
+(defn patch<-json
+  ``Sends a HTTP PATCH request with JSON body and returns the response.
+  ``
+  [url headers params]
+  (request :patch url headers params :body? true
+                                     :json? true))
+
 
 ################################
 # Helper functions
@@ -291,16 +321,18 @@
 (defn new-request
   ``Creates and returns a new request.
   ``
-  [method url &opt headers params json?]
+  [method url &opt headers params body? json?]
 
   (default headers {})
   (default params {})
+  (default body? (index-of method [:post :put :patch])) # FIXME: may not be a reasonable default value
   (default json? false)
 
   (table/setproto @{:method method
                     :url url
                     :headers headers
                     :params params
+                    :body? body?
                     :json? json?
 
                     :execute (fn [self]
@@ -308,6 +340,7 @@
                                         (self :url)
                                         (self :headers)
                                         (self :params)
-                                        (self :json?)))}
+                                        :body? (self :body?)
+                                        :json? (self :json?)))}
                   Request))
 
